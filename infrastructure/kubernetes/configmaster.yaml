@@ -1,0 +1,419 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmaster-config
+  namespace: configmaster
+data:
+  # Application configuration
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "info"
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"
+
+  # Frontend configuration
+  FRONTEND_PORT: "3000"
+  API_BASE_URL: "http://configmaster-backend:8000"
+
+  # Discovery configuration
+  DISCOVERY_INTERVAL: "300"  # 5 minutes
+  DISCOVERY_TIMEOUT: "30"
+
+  # Compliance configuration
+  COMPLIANCE_CHECK_INTERVAL: "3600"  # 1 hour
+  COMPLIANCE_SCORE_THRESHOLD: "80"
+
+  # Integration validation
+  INTEGRATION_CHECK_INTERVAL: "600"  # 10 minutes
+  INTEGRATION_TIMEOUT: "30"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configmaster-backend
+  namespace: configmaster
+  labels:
+    app: configmaster-backend
+    component: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: configmaster-backend
+  template:
+    metadata:
+      labels:
+        app: configmaster-backend
+        component: api
+    spec:
+      serviceAccountName: configmaster
+      containers:
+      - name: backend
+        image: configmaster/backend:latest
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: configmaster-db-secret
+              key: url
+        - name: REDIS_URL
+          value: "redis://configmaster-redis:6379"
+        envFrom:
+        - configMapRef:
+            name: configmaster-config
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp
+        emptyDir: {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configmaster-frontend
+  namespace: configmaster
+  labels:
+    app: configmaster-frontend
+    component: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: configmaster-frontend
+  template:
+    metadata:
+      labels:
+        app: configmaster-frontend
+        component: web
+    spec:
+      containers:
+      - name: frontend
+        image: configmaster/frontend:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        envFrom:
+        - configMapRef:
+            name: configmaster-config
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configmaster-discovery
+  namespace: configmaster
+  labels:
+    app: configmaster-discovery
+    component: discovery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: configmaster-discovery
+  template:
+    metadata:
+      labels:
+        app: configmaster-discovery
+        component: discovery
+    spec:
+      serviceAccountName: configmaster
+      containers:
+      - name: discovery
+        image: configmaster/discovery:latest
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: configmaster-db-secret
+              key: url
+        - name: API_BASE_URL
+          value: "http://configmaster-backend:8000"
+        envFrom:
+        - configMapRef:
+            name: configmaster-config
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: docker-sock
+          mountPath: /var/run/docker.sock
+          readOnly: true
+        - name: kubeconfig
+          mountPath: /root/.kube
+          readOnly: true
+      volumes:
+      - name: docker-sock
+        hostPath:
+          path: /var/run/docker.sock
+      - name: kubeconfig
+        secret:
+          secretName: configmaster-kubeconfig
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: configmaster-backend
+  namespace: configmaster
+  labels:
+    app: configmaster-backend
+spec:
+  selector:
+    app: configmaster-backend
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: configmaster-frontend
+  namespace: configmaster
+  labels:
+    app: configmaster-frontend
+spec:
+  selector:
+    app: configmaster-frontend
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: configmaster-redis
+  namespace: configmaster
+  labels:
+    app: configmaster-redis
+spec:
+  selector:
+    app: configmaster-redis
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configmaster-redis
+  namespace: configmaster
+  labels:
+    app: configmaster-redis
+    component: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: configmaster-redis
+  template:
+    metadata:
+      labels:
+        app: configmaster-redis
+        component: cache
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+          name: redis
+        args:
+        - redis-server
+        - --requirepass
+        - $(REDIS_PASSWORD)
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: configmaster-redis-secret
+              key: password
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: configmaster-redis-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: configmaster-redis-pvc
+  namespace: configmaster
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: gp3
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: configmaster-ingress
+  namespace: configmaster
+  annotations:
+    kubernetes.io/ingress.class: "alb"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+spec:
+  rules:
+  - host: configmaster.example.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: configmaster-backend
+            port:
+              number: 8000
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: configmaster-frontend
+            port:
+              number: 3000
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: configmaster-discovery-cron
+  namespace: configmaster
+spec:
+  schedule: "*/5 * * * *"  # Every 5 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: configmaster
+          containers:
+          - name: discovery
+            image: configmaster/discovery:latest
+            command:
+            - python
+            - discover.py
+            - scan
+            - --output
+            - /tmp/discovery.json
+            env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: configmaster-db-secret
+                  key: url
+            envFrom:
+            - configMapRef:
+                name: configmaster-config
+          restartPolicy: OnFailure
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: configmaster-compliance-cron
+  namespace: configmaster
+spec:
+  schedule: "0 */1 * * *"  # Every hour
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: compliance
+            image: configmaster/backend:latest
+            command:
+            - python
+            - -c
+            - |
+              import asyncio
+              from main import app
+              from compliance.rules import ComplianceEngine
+
+              async def run_compliance():
+                  # Run compliance checks for all applications
+                  print("Running compliance checks...")
+
+              asyncio.run(run_compliance())
+            env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: configmaster-db-secret
+                  key: url
+            envFrom:
+            - configMapRef:
+                name: configmaster-config
+          restartPolicy: OnFailure

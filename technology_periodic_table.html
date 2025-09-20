@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConfigMaster Technology Periodic Table</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .periodic-table {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 2px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .element {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .element:hover {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .element.startup { background: rgba(255, 99, 132, 0.8); }
+        .element.growing { background: rgba(54, 162, 235, 0.8); }
+        .element.scaling { background: rgba(255, 206, 86, 0.8); }
+        .element.established { background: rgba(75, 192, 192, 0.8); }
+        .element.enterprise { background: rgba(153, 102, 255, 0.8); }
+
+        .element.critical { border-color: #ff4444; border-width: 3px; }
+        .element.high { border-color: #ff8800; }
+        .element.medium { border-color: #ffcc00; }
+        .element.low { border-color: #88ff88; }
+
+        .symbol {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .name {
+            font-size: 0.7em;
+            line-height: 1.1;
+            margin-bottom: 2px;
+        }
+
+        .cost {
+            font-size: 0.6em;
+            opacity: 0.8;
+        }
+
+        .atomic-number {
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            font-size: 0.6em;
+            opacity: 0.7;
+        }
+
+        .legend {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .legend-section {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stage-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+
+        .priority-indicator {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+
+        .empty-cell {
+            opacity: 0.3;
+        }
+
+        @media (max-width: 1200px) {
+            .periodic-table {
+                grid-template-columns: repeat(10, 1fr);
+            }
+        }
+
+        @media (max-width: 800px) {
+            .periodic-table {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ConfigMaster Technology Periodic Table</h1>
+        <p>Organizational Technology Maturity Framework (COTMF)</p>
+        <p><em>Essential technologies for every stage of business growth</em></p>
+    </div>
+
+    <div class="periodic-table">
+
+        <div class="element startup critical"
+             title="Business email with custom domain and collaboration features | Cost: $15/mo | Setup: 1 days">
+            <div class="atomic-number">1</div>
+            <div class="symbol">PE</div>
+            <div class="name">Professional Email System</div>
+            <div class="cost">$15/mo</div>
+        </div>
+
+        <div class="element startup critical"
+             title="Secure cloud storage with file sharing and collaboration | Cost: $25/mo | Setup: 1 days">
+            <div class="atomic-number">2</div>
+            <div class="symbol">CF</div>
+            <div class="name">Cloud File Storage & Sharing</div>
+            <div class="cost">$25/mo</div>
+        </div>
+
+        <div class="element startup critical"
+             title="Track income, expenses, and generate basic financial reports | Cost: $50/mo | Setup: 3 days">
+            <div class="atomic-number">3</div>
+            <div class="symbol">BA</div>
+            <div class="name">Basic Accounting & Bookkeeping</div>
+            <div class="cost">$50/mo</div>
+        </div>
+<div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div>
+        <div class="element startup high"
+             title="Secure password storage and sharing for team accounts | Cost: $8/mo | Setup: 2 days">
+            <div class="atomic-number">5</div>
+            <div class="symbol">BP</div>
+            <div class="name">Business Password Management</div>
+            <div class="cost">$8/mo</div>
+        </div>
+<div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div>
+        <div class="element growing high"
+             title="Automated backup of critical business data and systems | Cost: $25/mo | Setup: 3 days">
+            <div class="atomic-number">9</div>
+            <div class="symbol">AD</div>
+            <div class="name">Automated Data Backup</div>
+            <div class="cost">$25/mo</div>
+        </div>
+
+        <div class="element growing high"
+             title="Create invoices, track payments, and accept online payments | Cost: $30/mo | Setup: 5 days">
+            <div class="atomic-number">10</div>
+            <div class="symbol">PI</div>
+            <div class="name">Professional Invoicing & Payments</div>
+            <div class="cost">$30/mo</div>
+        </div>
+
+        <div class="element growing critical"
+             title="Track projects, assign tasks, and manage team workflows | Cost: $25/mo | Setup: 5 days">
+            <div class="atomic-number">6</div>
+            <div class="symbol">P&</div>
+            <div class="name">Project & Task Management</div>
+            <div class="cost">$25/mo</div>
+        </div>
+
+        <div class="element growing critical"
+             title="Track leads, manage customer relationships, and sales pipeline | Cost: $75/mo | Setup: 7 days">
+            <div class="atomic-number">7</div>
+            <div class="symbol">CR</div>
+            <div class="name">Customer Relationship Management</div>
+            <div class="cost">$75/mo</div>
+        </div>
+
+        <div class="element growing high"
+             title="Employee records, onboarding, time tracking, and basic HR | Cost: $50/mo | Setup: 10 days">
+            <div class="atomic-number">8</div>
+            <div class="symbol">HI</div>
+            <div class="name">HR Information System</div>
+            <div class="cost">$50/mo</div>
+        </div>
+<div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div>
+        <div class="element scaling high"
+             title="Advanced accounting, financial planning, and expense management | Cost: $500/mo | Setup: 30 days">
+            <div class="atomic-number">15</div>
+            <div class="symbol">AF</div>
+            <div class="name">Advanced Financial Management</div>
+            <div class="cost">$500/mo</div>
+        </div>
+<div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div>
+        <div class="element scaling critical"
+             title="Data analytics, reporting dashboards, and business insights | Cost: $200/mo | Setup: 21 days">
+            <div class="atomic-number">12</div>
+            <div class="symbol">BI</div>
+            <div class="name">Business Intelligence & Analytics</div>
+            <div class="cost">$200/mo</div>
+        </div>
+
+        <div class="element scaling critical"
+             title="Email campaigns, lead nurturing, and marketing analytics | Cost: $300/mo | Setup: 14 days">
+            <div class="atomic-number">11</div>
+            <div class="symbol">MA</div>
+            <div class="name">Marketing Automation Platform</div>
+            <div class="cost">$300/mo</div>
+        </div>
+
+        <div class="element scaling high"
+             title="Ticket management, knowledge base, and customer support tools | Cost: $100/mo | Setup: 10 days">
+            <div class="atomic-number">13</div>
+            <div class="symbol">CS</div>
+            <div class="name">Customer Support & Help Desk</div>
+            <div class="cost">$100/mo</div>
+        </div>
+
+        <div class="element scaling high"
+             title="Single sign-on, user provisioning, and access controls | Cost: $75/mo | Setup: 14 days">
+            <div class="atomic-number">14</div>
+            <div class="symbol">I&</div>
+            <div class="name">Identity & Access Management</div>
+            <div class="cost">$75/mo</div>
+        </div>
+<div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div>
+        <div class="element established critical"
+             title="Advanced CRM with sales operations, forecasting, and automation | Cost: $500/mo | Setup: 45 days">
+            <div class="atomic-number">16</div>
+            <div class="symbol">EC</div>
+            <div class="name">Enterprise CRM & Sales Operations</div>
+            <div class="cost">$500/mo</div>
+        </div>
+
+        <div class="element established high"
+             title="Comprehensive HR with performance, benefits, and talent management | Cost: $150/mo | Setup: 90 days">
+            <div class="atomic-number">19</div>
+            <div class="symbol">EH</div>
+            <div class="name">Enterprise HR Management System</div>
+            <div class="cost">$150/mo</div>
+        </div>
+<div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div>
+        <div class="element established critical"
+             title="Security monitoring, threat detection, and incident response | Cost: $800/mo | Setup: 45 days">
+            <div class="atomic-number">20</div>
+            <div class="symbol">SI</div>
+            <div class="name">Security Information & Event Management</div>
+            <div class="cost">$800/mo</div>
+        </div>
+
+        <div class="element established critical"
+             title="Compliance monitoring, risk assessment, and audit management | Cost: $1000/mo | Setup: 60 days">
+            <div class="atomic-number">17</div>
+            <div class="symbol">GR</div>
+            <div class="name">Governance, Risk & Compliance</div>
+            <div class="cost">$1000/mo</div>
+        </div>
+
+        <div class="element established high"
+             title="Continuous integration, deployment, and infrastructure automation | Cost: $400/mo | Setup: 30 days">
+            <div class="atomic-number">18</div>
+            <div class="symbol">D&</div>
+            <div class="name">DevOps & CI/CD Platform</div>
+            <div class="cost">$400/mo</div>
+        </div>
+<div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div><div class="element empty-cell"></div>
+        <div class="element enterprise high"
+             title="Machine learning, predictive analytics, and AI-powered insights | Cost: $2000/mo | Setup: 90 days">
+            <div class="atomic-number">22</div>
+            <div class="symbol">A&</div>
+            <div class="name">AI/ML & Advanced Analytics</div>
+            <div class="cost">$2000/mo</div>
+        </div>
+
+        <div class="element enterprise high"
+             title="API gateway, management, and enterprise integration platform | Cost: $1500/mo | Setup: 60 days">
+            <div class="atomic-number">23</div>
+            <div class="symbol">EA</div>
+            <div class="name">Enterprise API Management</div>
+            <div class="cost">$1500/mo</div>
+        </div>
+
+        <div class="element enterprise critical"
+             title="Integrated business processes, supply chain, and operations management | Cost: $2000/mo | Setup: 180 days">
+            <div class="atomic-number">21</div>
+            <div class="symbol">ER</div>
+            <div class="name">Enterprise Resource Planning</div>
+            <div class="cost">$2000/mo</div>
+        </div>
+
+    </div>
+
+    <div class="legend">
+        <div class="legend-section">
+            <div class="legend-title">Maturity Stages (Periods)</div>
+            <div><span class="stage-indicator startup"></span>Startup (1-10 people)</div>
+            <div><span class="stage-indicator growing"></span>Growing (11-50 people)</div>
+            <div><span class="stage-indicator scaling"></span>Scaling (51-200 people)</div>
+            <div><span class="stage-indicator established"></span>Established (201-1000 people)</div>
+            <div><span class="stage-indicator enterprise"></span>Enterprise (1000+ people)</div>
+        </div>
+
+        <div class="legend-section">
+            <div class="legend-title">Priority Levels (Border Colors)</div>
+            <div><span class="priority-indicator" style="background: #ff4444;"></span>Critical - Must have</div>
+            <div><span class="priority-indicator" style="background: #ff8800;"></span>High - Should have</div>
+            <div><span class="priority-indicator" style="background: #ffcc00;"></span>Medium - Nice to have</div>
+            <div><span class="priority-indicator" style="background: #88ff88;"></span>Low - Future consideration</div>
+        </div>
+
+        <div class="legend-section">
+            <div class="legend-title">Technology Categories (Groups)</div>
+            <div style="font-size: 0.9em; line-height: 1.6;">
+                Communication • File Storage • Financial • Project Management<br>
+                CRM • HR • Analytics • Marketing • Support • Security<br>
+                Compliance • DevOps • Advanced Analytics • Integration • Supply Chain
+            </div>
+        </div>
+
+        <div class="legend-section">
+            <div class="legend-title">How to Read Each Element</div>
+            <div style="font-size: 0.9em; line-height: 1.6;">
+                <strong>Symbol:</strong> Technology abbreviation<br>
+                <strong>Name:</strong> Full technology name<br>
+                <strong>Cost:</strong> Monthly cost estimate<br>
+                <strong>Tooltip:</strong> Hover for description & setup time
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
+        <p>ConfigMaster Organizational Technology Maturity Framework v1.0</p>
+        <p>Like the chemical periodic table, this framework shows the fundamental "elements" of business technology</p>
+    </div>
+
+    <script>
+        // Add click functionality to show detailed information
+        document.querySelectorAll('.element:not(.empty-cell)').forEach(element => {
+            element.addEventListener('click', function() {
+                const name = this.querySelector('.name').textContent;
+                const symbol = this.querySelector('.symbol').textContent;
+                const description = this.getAttribute('title');
+
+                alert(`${name} (${symbol})\n\n${description}`);
+            });
+        });
+    </script>
+</body>
+</html>
