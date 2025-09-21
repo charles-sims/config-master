@@ -2,7 +2,7 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "cd backend && python flask_server.py"
+startCommand = "python backend/flask_server.py"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "always"
