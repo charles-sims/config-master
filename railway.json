@@ -1,0 +1,51 @@
+{
+  "name": "configmaster",
+  "services": [
+    {
+      "name": "backend",
+      "source": {
+        "repo": "charles-sims/config-master",
+        "rootDirectory": "/backend"
+      },
+      "variables": {
+        "OPENAI_API_KEY": "${{OPENAI_API_KEY}}",
+        "EXA_API_KEY": "${{EXA_API_KEY}}",
+        "FIRECRAWL_API_KEY": "${{FIRECRAWL_API_KEY}}",
+        "DATABASE_URL": "${{DATABASE_URL}}",
+        "FLASK_ENV": "production"
+      }
+    },
+    {
+      "name": "frontend",
+      "source": {
+        "repo": "charles-sims/config-master",
+        "rootDirectory": "/frontend"
+      },
+      "variables": {
+        "NEXT_PUBLIC_API_URL": "${{backend.url}}"
+      }
+    },
+    {
+      "name": "discovery",
+      "source": {
+        "repo": "charles-sims/config-master",
+        "rootDirectory": "/discovery"
+      },
+      "variables": {
+        "OPENAI_API_KEY": "${{OPENAI_API_KEY}}",
+        "EXA_API_KEY": "${{EXA_API_KEY}}",
+        "FIRECRAWL_API_KEY": "${{FIRECRAWL_API_KEY}}"
+      }
+    }
+  ],
+  "plugins": [
+    {
+      "name": "postgresql",
+      "plan": "hobby"
+    },
+    {
+      "name": "redis",
+      "plan": "hobby"
+    }
+  ]
+}

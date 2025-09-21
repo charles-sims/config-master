@@ -288,9 +288,13 @@ def get_discovery_status():
     })
 
 if __name__ == "__main__":
-    print("🚀 Starting ConfigMaster Backend API on http://localhost:8000")
+    import os
+    port = int(os.environ.get('PORT', 8000))
+    debug = os.environ.get('DEBUG', 'True').lower() == 'true'
+
+    print("🚀 Starting ConfigMaster Backend API on http://localhost:{}".format(port))
     print("📊 Dashboard will be available at http://localhost:3000")
     print("💾 Using SQLite database: configmaster.db")
     print("🔍 API Documentation available at all endpoints")
 
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=debug)
